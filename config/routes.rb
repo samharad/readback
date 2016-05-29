@@ -1,7 +1,3 @@
-require "resque"
-require 'resque-scheduler'
-require 'resque/scheduler/server'
-
 Rails.application.routes.draw do
 
   devise_for :playlist_editors
@@ -42,15 +38,13 @@ Rails.application.routes.draw do
 
   resources :setbreaks, only: [:update, :create, :destroy]
 
-  authenticate :dj do
-    mount Resque::Server.new => "/resque_web"
-  end
-
   root 'playlist#index'
   resources :playlist, only: [:index] do
     get :search, on: :collection
     get :archive, on: :collection
   end
+
+  mount ActionCable.server => '/cable'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
